@@ -15,3 +15,5 @@ override.tf.json
 talosconfig
 kubeconfig
 *.kubeconfig
+tfplan
+terraform/talos/rendered/
