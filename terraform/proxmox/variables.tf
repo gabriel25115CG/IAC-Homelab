@@ -15,6 +15,12 @@ variable "proxmox_tls_insecure" {
   default     = true
 }
 
+variable "proxmox_ssh_private_key_file" {
+  description = "Chemin vers la clé privée SSH pour l'accès root à l'hôte Proxmox (le provider en a besoin pour l'upload de snippets et l'import d'images, l'API seule ne suffit pas)"
+  type        = string
+  default     = "~/.ssh/proxmox_terraform_ed25519"
+}
+
 variable "proxmox_node" {
   description = "Nom du nœud Proxmox cible (visible dans l'UI Proxmox, ex: node-01)"
   type        = string
