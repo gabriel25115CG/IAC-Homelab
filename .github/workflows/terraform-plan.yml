@@ -1,0 +1,67 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    paths:
+      - 'terraform/**'
+
+jobs:
+  fmt-and-validate:
+    name: fmt/validate (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [proxmox, talos, cloudflare]
+    defaults:
+      run:
+        working-directory: terraform/${{ matrix.module }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Check if module directory exists
+        id: check
+        run: |
+          if [ -d "." ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: terraform fmt -check
+        if: steps.check.outputs.exists == 'true'
+        run: terraform fmt -check -recursive
+
+      - name: terraform init (no backend)
+        if: steps.check.outputs.exists == 'true'
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        if: steps.check.outputs.exists == 'true'
+        run: terraform validate
+
+  # The plan/apply jobs below need real network access to the Proxmox host on
+  # the homelab LAN (10.20.20.0/24), which GitHub-hosted runners cannot reach.
+  # They must run on a self-hosted runner registered from a machine on that
+  # LAN (or on the cluster host itself), tagged "homelab".
+  plan:
+    name: terraform plan (${{ matrix.module }})
+    needs: fmt-and-validate
+    runs-on: [self-hosted, homelab]
+    strategy:
+      matrix:
+        module: [proxmox, talos, cloudflare]
+    defaults:
+      run:
+        working-directory: terraform/${{ matrix.module }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: terraform init
+        run: terraform init
+
+      - name: terraform plan
+        run: terraform plan -input=false

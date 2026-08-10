@@ -1,0 +1,7 @@
+# Copie ce fichier en terraform.tfvars (jamais commit, voir .gitignore)
+# et remplis les valeurs réelles. Le token API Cloudflare est un secret.
+
+cloudflare_api_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+cloudflare_zone_id   = "0123456789abcdef0123456789abcdef"
+public_ip_address    = "203.0.113.10"
+domain                = "gabriel0day.cloud"
