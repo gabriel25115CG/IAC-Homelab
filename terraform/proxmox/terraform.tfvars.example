@@ -1,12 +1,12 @@
 # Copie ce fichier en terraform.tfvars (jamais commit, voir .gitignore)
 # et remplis les valeurs réelles. Le token API Proxmox est un secret.
 
-proxmox_api_url      = "https://node-01.labo.priv:8006/"
+proxmox_api_url      = "https://exemple.priv:8006/"
 proxmox_api_token    = "terraform@pve!terraform-token=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 proxmox_tls_insecure = true
 proxmox_node         = "node-01"
 proxmox_storage      = "local-lvm"
 proxmox_iso_storage  = "local"
 
-network_bridge  = "vmbr1"
-network_gateway = "10.20.20.254"
+network_bridge  = "vmbrX"
+network_gateway = "1.1.1.1"
