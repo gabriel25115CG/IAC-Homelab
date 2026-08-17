@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: links
+  labels:
+    app: links
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: links
+  template:
+    metadata:
+      labels:
+        app: links
+    spec:
+      containers:
+        - name: links
+          image: ghcr.io/gabriel25115cg/links:latest
+          ports:
+            - containerPort: 80
