@@ -6,9 +6,14 @@ namespace: argocd
 resources:
   - namespace.yaml
   - github.com/argoproj/argo-cd//manifests/cluster-install?ref=stable
+  - ingress.yaml
 
 patches:
   - path: argocd-cm-kustomize-helm-patch.yaml
     target:
       kind: ConfigMap
       name: argocd-cm
+  - path: argocd-cmd-params-insecure-patch.yaml
+    target:
+      kind: ConfigMap
+      name: argocd-cmd-params-cm

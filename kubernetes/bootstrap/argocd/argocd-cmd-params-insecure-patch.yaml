@@ -1,0 +1,10 @@
+# ArgoCD sert du HTTPS auto-signé par défaut. On le fait servir en clair en
+# interne (server.insecure) et on laisse Traefik + cert-manager gérer le vrai
+# certificat public en frontal — même modèle que toutes les autres apps.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  server.insecure: "true"
