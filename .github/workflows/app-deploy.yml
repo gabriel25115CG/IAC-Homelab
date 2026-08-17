@@ -42,8 +42,24 @@ jobs:
           fi
           echo "apps=$apps" | tee -a "$GITHUB_OUTPUT"
 
-  build-and-deploy:
+  # Scan de secrets sur tout le repo (pas seulement l'app qui a changé) — un
+  # token/clé committé par erreur n'importe où doit bloquer le déploiement.
+  security-scan:
     needs: detect
+    if: needs.detect.outputs.apps != '[]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan for committed secrets (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-deploy:
+    needs: [detect, security-scan]
     if: needs.detect.outputs.apps != '[]'
     runs-on: ubuntu-latest
     strategy:
@@ -58,6 +74,18 @@ jobs:
         run: |
           echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
           echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Bloque sur les vulnérabilités Critical/High dans les dépendances npm
+      # de l'app — avant même de construire l'image.
+      - name: Audit npm dependencies
+        working-directory: app/${{ matrix.app }}
+        run: |
+          npm ci
+          npm audit --audit-level=high
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -83,6 +111,15 @@ jobs:
           tags: |
             ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
             ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:latest
+
+      # Bloque le déploiement (pas la publication, déjà faite ci-dessus) si
+      # l'image contient des vulnérabilités Critical/High (OS + dépendances).
+      - name: Scan image for vulnerabilities (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
 
       - name: Install kustomize
         run: |
