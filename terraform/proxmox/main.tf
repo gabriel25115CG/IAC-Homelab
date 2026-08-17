@@ -17,10 +17,6 @@
 # pour l'ordre d'apply exact entre terraform/talos et terraform/proxmox.
 
 locals {
-  # Schematic factory.talos.dev vide (aucune extension système) — voir commentaire
-  # sur proxmox_virtual_environment_download_file.talos_nocloud ci-dessous.
-  talos_schematic_id = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
-
   network_prefix = join(".", slice(split(".", var.network_gateway), 0, 3))
 
   control_plane_specs = {
@@ -55,13 +51,15 @@ resource "proxmox_virtual_environment_download_file" "talos_nocloud" {
   content_type = "iso"
   datastore_id = var.proxmox_iso_storage
   node_name    = var.proxmox_node
-  url          = "https://factory.talos.dev/image/${local.talos_schematic_id}/${var.talos_version}/nocloud-amd64.raw.gz"
+  url          = "https://factory.talos.dev/image/${var.talos_schematic_id}/${var.talos_version}/nocloud-amd64.raw.gz"
   file_name    = "talos-${var.talos_version}-nocloud-amd64.img"
 
-  # L'ID de schematic ci-dessous correspond au schematic vide {"customization":{}}
-  # généré via POST https://factory.talos.dev/schematics (aucune extension système
-  # requise pour un cluster Talos standard avec pilotes virtio, déjà inclus dans nocloud).
-  # Vérifié le 2026-08-10 : cet ID est stable tant que le schematic (vide) ne change pas.
+  # Schematic généré via POST https://factory.talos.dev/schematics avec
+  # customization.systemExtensions.officialExtensions = [siderolabs/iscsi-tools,
+  # siderolabs/util-linux-tools] — Longhorn a besoin d'iscsiadm (absent d'une image
+  # Talos standard) pour ses volumes. Un schematic vide avait été utilisé au départ
+  # et cassait le DaemonSet longhorn-manager ("iscsiadm: No such file or directory").
+  # Vérifié le 2026-08-17 : cet ID est stable tant que ce schematic ne change pas.
   decompression_algorithm = "gz"
   overwrite               = false
 }

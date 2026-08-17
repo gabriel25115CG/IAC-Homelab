@@ -63,6 +63,12 @@ variable "talos_version" {
   default     = "v1.8.2"
 }
 
+variable "talos_schematic_id" {
+  description = "Schematic Image Factory (doit correspondre à celui de terraform/talos) : inclut les extensions siderolabs/iscsi-tools et siderolabs/util-linux-tools, requises par Longhorn (iscsiadm/udevadm absents d'une image Talos standard)"
+  type        = string
+  default     = "613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245"
+}
+
 variable "control_plane_nodes" {
   description = "Définition des VMs control-plane : nom => dernier octet IP"
   type        = map(number)
@@ -90,7 +96,7 @@ variable "control_plane_vcpu" {
 variable "control_plane_memory" {
   description = "RAM en Mo"
   type        = number
-  default     = 4096
+  default     = 8192
 }
 
 variable "control_plane_disk_size" {

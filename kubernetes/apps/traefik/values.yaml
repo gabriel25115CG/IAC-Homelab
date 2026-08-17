@@ -1,0 +1,18 @@
+service:
+  type: LoadBalancer
+  annotations:
+    metallb.io/address-pool: lan-pool
+    metallb.io/loadBalancerIPs: 10.20.20.200
+ports:
+  web:
+    port: 8000
+    expose:
+      default: true
+    exposedPort: 80
+  websecure:
+    port: 8443
+    expose:
+      default: true
+    exposedPort: 443
+    tls:
+      enabled: true

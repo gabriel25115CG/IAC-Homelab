@@ -20,6 +20,12 @@ variable "talos_version" {
   default     = "v1.8.2"
 }
 
+variable "talos_schematic_id" {
+  description = "Schematic Image Factory (doit correspondre à celui de terraform/proxmox) : inclut les extensions siderolabs/iscsi-tools et siderolabs/util-linux-tools, requises par Longhorn (iscsiadm/udevadm absents d'une image Talos standard)"
+  type        = string
+  default     = "613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245"
+}
+
 variable "network_gateway" {
   description = "Passerelle du réseau des VMs (doit correspondre à terraform/proxmox/variables.tf)"
   type        = string

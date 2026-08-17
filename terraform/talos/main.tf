@@ -77,6 +77,13 @@ data "talos_machine_configuration" "this" {
             }
           ]
         }
+        # Référence le schematic Image Factory (avec extensions) plutôt que
+        # l'installer générique, pour qu'un futur `talosctl upgrade` conserve
+        # iscsi-tools/util-linux-tools au lieu de revenir à une image nue.
+        install = {
+          disk  = "/dev/sda"
+          image = "factory.talos.dev/installer/${var.talos_schematic_id}:${var.talos_version}"
+        }
       }
     })
   ]

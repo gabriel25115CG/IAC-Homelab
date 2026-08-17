@@ -1,5 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources:
-  - application.yaml
+namespace: traefik
+
+# Le namespace "traefik" est créé automatiquement par CreateNamespace=true
+# (syncOptions du template de l'ApplicationSet, voir bootstrap/argocd/app-of-apps.yaml).
+
+# Rendu direct du chart Helm par kustomize (pas d'Application ArgoCD imbriquée) :
+# l'ApplicationSet crée déjà une Application par dossier sous kubernetes/apps/,
+# donc un application.yaml ici serait une Application dans une Application,
+# jamais réconciliée (namespace de destination faux). Nécessite
+# `kustomize.buildOptions: --enable-helm` dans argocd-cm (voir bootstrap/argocd).
+helmCharts:
+  - name: traefik
+    repo: https://traefik.github.io/charts
+    version: 41.2.0
+    releaseName: traefik
+    valuesFile: values.yaml

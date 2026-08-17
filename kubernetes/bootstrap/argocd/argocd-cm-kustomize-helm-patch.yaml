@@ -1,0 +1,10 @@
+# Autorise kustomize à inflater les charts Helm référencés via `helmCharts:`
+# dans les kustomization.yaml des apps (ex: kubernetes/apps/traefik) — sans ça,
+# ArgoCD échoue à builder tout dossier utilisant un chart Helm en kustomize natif.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+data:
+  kustomize.buildOptions: --enable-helm
