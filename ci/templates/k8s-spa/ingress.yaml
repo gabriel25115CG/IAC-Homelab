@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: __APP_NAME__
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - __APP_NAME__.gabriel0day.cloud
+      secretName: __APP_NAME__-tls
+  rules:
+    - host: __APP_NAME__.gabriel0day.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: __APP_NAME__
+                port:
+                  number: 80

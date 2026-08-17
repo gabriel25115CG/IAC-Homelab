@@ -89,6 +89,24 @@ jobs:
           curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz" | tar xz
           sudo mv kustomize /usr/local/bin/
 
+      # Un développeur qui ajoute app/<nom> n'a jamais besoin de créer les
+      # manifests Kubernetes : au premier push d'une app inconnue, on les
+      # génère depuis ci/templates/k8s-spa (host = <nom>.gabriel0day.cloud,
+      # dérivé automatiquement du nom du dossier sous app/).
+      - name: Scaffold Kubernetes manifests if missing
+        id: scaffold
+        run: |
+          if [ ! -d "kubernetes/apps/${{ matrix.app }}" ]; then
+            mkdir -p "kubernetes/apps/${{ matrix.app }}"
+            for f in ci/templates/k8s-spa/*; do
+              sed -e "s/__APP_NAME__/${{ matrix.app }}/g" -e "s/__OWNER__/${{ steps.tag.outputs.owner }}/g" \
+                "$f" > "kubernetes/apps/${{ matrix.app }}/$(basename "$f")"
+            done
+            echo "scaffolded=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "scaffolded=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Bump image tag in manifest
         working-directory: kubernetes/apps/${{ matrix.app }}
         run: kustomize edit set image ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}=ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
@@ -97,7 +115,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add kubernetes/apps/${{ matrix.app }}/kustomization.yaml
-          git commit -m "chore(${{ matrix.app }}): bump image to ${{ steps.tag.outputs.tag }}"
+          git add kubernetes/apps/${{ matrix.app }}/
+          if [ "${{ steps.scaffold.outputs.scaffolded }}" = "true" ]; then
+            msg="feat(${{ matrix.app }}): scaffold app and deploy image ${{ steps.tag.outputs.tag }}"
+          else
+            msg="chore(${{ matrix.app }}): bump image to ${{ steps.tag.outputs.tag }}"
+          fi
+          git commit -m "$msg"
           git pull --rebase origin master
           git push origin master
