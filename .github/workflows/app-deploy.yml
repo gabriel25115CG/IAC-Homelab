@@ -67,6 +67,8 @@ jobs:
         with:
           context: app/${{ matrix.app }}
           file: ci/templates/spa/Dockerfile
+          build-contexts: |
+            templates=ci/templates/spa
           push: true
           tags: |
             ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
