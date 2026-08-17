@@ -1,0 +1,13 @@
+title = "gitleaks config — IAC-Homelab"
+
+[extend]
+useDefault = true
+
+# Les fichiers *-sealed-secret.yaml ne contiennent que du texte chiffré via
+# Sealed Secrets (déchiffrable uniquement par le controller du cluster) —
+# leur haute entropie déclenche un faux positif sur la règle generic-api-key.
+[[allowlist]]
+description = "Sealed Secrets: valeurs chiffrées, pas des secrets en clair"
+paths = [
+  '''.*-sealed-secret\.yaml$''',
+]
