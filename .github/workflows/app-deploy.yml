@@ -43,9 +43,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compute image tag
+      - name: Compute image tag and owner
         id: tag
-        run: echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -54,14 +56,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Le dossier app/<app> ne contient que du code applicatif — aucun Dockerfile
+      # à écrire côté développeur. Le build utilise un template Dockerfile générique
+      # géré par l'infra (ci/templates/spa), avec app/<app> comme seul contexte de build.
+      - name: Prepare build context
+        run: cp ci/templates/spa/dockerignore app/${{ matrix.app }}/.dockerignore
+
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: app/${{ matrix.app }}
+          file: ci/templates/spa/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:latest
+            ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
+            ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:latest
 
       - name: Install kustomize
         run: |
@@ -70,7 +79,7 @@ jobs:
 
       - name: Bump image tag in manifest
         working-directory: kubernetes/apps/${{ matrix.app }}
-        run: kustomize edit set image ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}=ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
+        run: kustomize edit set image ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}=ghcr.io/${{ steps.tag.outputs.owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
 
       - name: Commit and push
         run: |
