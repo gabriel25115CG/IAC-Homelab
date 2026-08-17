@@ -17,3 +17,7 @@ kubeconfig
 *.kubeconfig
 tfplan
 terraform/talos/rendered/
+
+# App builds
+node_modules/
+dist/

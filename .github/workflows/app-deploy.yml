@@ -1,31 +1,49 @@
-name: App Deploy (reusable)
+name: Deploy apps
 
 on:
-  workflow_call:
-    inputs:
-      app_name:
-        description: Name of the app, must match a directory under kubernetes/apps/
-        required: true
-        type: string
-      image_name:
-        description: Full image name without tag, e.g. ghcr.io/owner/portfolio
-        required: true
-        type: string
-    secrets:
-      token:
-        description: GitHub token with push access to this repository (contents write)
-        required: true
+  push:
+    branches: [master]
+    paths:
+      - "app/**"
+
+# contents:write pour committer le bump de tag, packages:write pour pousser sur GHCR.
+# Tout se passe dans ce même repo (monorepo), donc GITHUB_TOKEN suffit — pas de PAT.
+permissions:
+  contents: write
+  packages: write
 
 jobs:
-  build-and-push:
-    name: Build and push image
+  detect:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.tag.outputs.tag }}
+      apps: ${{ steps.detect.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed apps
+        id: detect
+        run: |
+          before="${{ github.event.before }}"
+          if [ -z "$before" ] || ! git cat-file -e "$before" 2>/dev/null; then
+            before=$(git rev-parse HEAD~1 2>/dev/null || echo "$(git hash-object -t tree /dev/null)")
+          fi
+          apps=$(git diff --name-only "$before" "${{ github.sha }}" -- app/ | cut -d/ -f2 | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "apps=$apps" | tee -a "$GITHUB_OUTPUT"
+
+  build-and-deploy:
+    needs: detect
+    if: needs.detect.outputs.apps != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        app: ${{ fromJson(needs.detect.outputs.apps) }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compute short SHA tag
+      - name: Compute image tag
         id: tag
         run: echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
@@ -34,38 +52,31 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.token }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: app/${{ matrix.app }}
           push: true
-          tags: ${{ inputs.image_name }}:${{ steps.tag.outputs.tag }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:latest
 
-  bump-manifest:
-    name: Bump image tag in IAC-Homelab
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout IAC-Homelab
-        uses: actions/checkout@v4
-        with:
-          repository: gabriel25115CG/IAC-Homelab
-          ref: master
-          token: ${{ secrets.token }}
+      - name: Install kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
 
-      - name: Set up kustomize
-        uses: imranismail/setup-kustomize@v2
-
-      - name: Bump image tag
-        working-directory: kubernetes/apps/${{ inputs.app_name }}
-        run: kustomize edit set image ${{ inputs.image_name }}=${{ inputs.image_name }}:${{ needs.build-and-push.outputs.image_tag }}
+      - name: Bump image tag in manifest
+        working-directory: kubernetes/apps/${{ matrix.app }}
+        run: kustomize edit set image ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}=ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }}
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add kubernetes/apps/${{ inputs.app_name }}/kustomization.yaml
-          git commit -m "chore(${{ inputs.app_name }}): bump image to ${{ needs.build-and-push.outputs.image_tag }}"
+          git add kubernetes/apps/${{ matrix.app }}/kustomization.yaml
+          git commit -m "chore(${{ matrix.app }}): bump image to ${{ steps.tag.outputs.tag }}"
+          git pull --rebase origin master
           git push origin master
