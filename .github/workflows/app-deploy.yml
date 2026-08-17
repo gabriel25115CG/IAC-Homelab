@@ -86,7 +86,7 @@ jobs:
 
       - name: Install kustomize
         run: |
-          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s 5.5.0
+          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz" | tar xz
           sudo mv kustomize /usr/local/bin/
 
       - name: Bump image tag in manifest
