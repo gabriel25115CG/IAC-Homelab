@@ -9,4 +9,4 @@ resources:
 images:
 - name: ghcr.io/gabriel25115cg/links
   newName: ghcr.io/gabriel25115cg/links
-  newTag: 88adb59
+  newTag: 3e97e5f
