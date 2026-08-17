@@ -4,7 +4,6 @@ const links = [
   { label: 'Portfolio', href: 'https://portfolio.gabriel0day.cloud' },
   { label: 'GitHub', href: 'https://github.com/gabriel25115CG' },
   { label: 'Homelab (IAC-Homelab)', href: 'https://github.com/gabriel25115CG/IAC-Homelab' },
-  { label: 'Email', href: 'mailto:gabriel.chalmet@arrive.com' },
 ]
 
 function App() {

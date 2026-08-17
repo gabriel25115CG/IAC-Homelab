@@ -102,10 +102,7 @@ function App() {
           <h2>Contact</h2>
           <p>Disponible pour échanger sur un poste, une mission ou un projet.</p>
           <div className="cta">
-            <a className="button primary" href="mailto:gabriel.chalmet@arrive.com">
-              gabriel.chalmet@arrive.com
-            </a>
-            <a className="button" href="https://github.com/gabriel25115CG" target="_blank" rel="noreferrer">
+            <a className="button primary" href="https://github.com/gabriel25115CG" target="_blank" rel="noreferrer">
               GitHub
             </a>
           </div>
