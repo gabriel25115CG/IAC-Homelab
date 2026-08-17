@@ -5,6 +5,12 @@ on:
     branches: [master]
     paths:
       - "app/**"
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Nom de l'app à (re)builder manuellement (dossier sous app/)"
+        required: true
+        type: string
 
 # contents:write pour committer le bump de tag, packages:write pour pousser sur GHCR.
 # Tout se passe dans ce même repo (monorepo), donc GITHUB_TOKEN suffit — pas de PAT.
@@ -25,11 +31,15 @@ jobs:
       - name: Detect changed apps
         id: detect
         run: |
-          before="${{ github.event.before }}"
-          if [ -z "$before" ] || ! git cat-file -e "$before" 2>/dev/null; then
-            before=$(git rev-parse HEAD~1 2>/dev/null || echo "$(git hash-object -t tree /dev/null)")
+          if [ -n "${{ inputs.app }}" ]; then
+            apps='["${{ inputs.app }}"]'
+          else
+            before="${{ github.event.before }}"
+            if [ -z "$before" ] || ! git cat-file -e "$before" 2>/dev/null; then
+              before=$(git rev-parse HEAD~1 2>/dev/null || echo "$(git hash-object -t tree /dev/null)")
+            fi
+            apps=$(git diff --name-only "$before" "${{ github.sha }}" -- app/ | cut -d/ -f2 | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
           fi
-          apps=$(git diff --name-only "$before" "${{ github.sha }}" -- app/ | cut -d/ -f2 | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "apps=$apps" | tee -a "$GITHUB_OUTPUT"
 
   build-and-deploy:
