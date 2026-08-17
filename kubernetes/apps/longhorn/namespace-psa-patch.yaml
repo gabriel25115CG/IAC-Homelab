@@ -1,0 +1,10 @@
+# Talos active par défaut l'admission PodSecurity "baseline" sur tout namespace
+# hors kube-system. Longhorn a besoin de pods privilégiés + hostPath (pilote de
+# stockage), donc ce patch marque son namespace en "privileged" explicitement.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: longhorn-system
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: latest

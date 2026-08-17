@@ -4,3 +4,9 @@ kind: Kustomization
 resources:
   - https://raw.githubusercontent.com/longhorn/longhorn/v1.12.0/deploy/longhorn.yaml
   - storage-class.yaml
+
+patches:
+  - path: namespace-psa-patch.yaml
+    target:
+      kind: Namespace
+      name: longhorn-system
