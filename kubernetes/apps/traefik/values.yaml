@@ -9,6 +9,10 @@ ports:
     expose:
       default: true
     exposedPort: 80
+    # Sans ça, une URL tapée sans "https://" (très courant) renvoie un 404 au
+    # lieu de rediriger — c'est ce qui vient de se produire avec http://links...
+    redirectTo:
+      port: websecure
   websecure:
     port: 8443
     expose:
