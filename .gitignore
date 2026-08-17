@@ -21,3 +21,7 @@ terraform/talos/rendered/
 # App builds
 node_modules/
 dist/
+
+# Kustomize --enable-helm local chart cache (never commit vendored charts —
+# kustomize fetches them fresh from the helmCharts: entry every build)
+kubernetes/apps/*/charts/
