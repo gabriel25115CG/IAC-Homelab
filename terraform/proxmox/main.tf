@@ -47,7 +47,12 @@ locals {
 }
 
 resource "proxmox_virtual_environment_download_file" "talos_nocloud" {
-  content_type = "import"
+  # content_type = "iso" (pas "import") : le content-type "import" attend une image
+  # déjà décompressée (import_from), alors que "iso" + decompression_algorithm permet
+  # de décompresser le .raw.gz au moment du téléchargement. Le disque des VMs ci-dessous
+  # référence donc ce fichier via `file_id`, pas `import_from` (réservé aux images déjà
+  # décompressées en content-type "import").
+  content_type = "iso"
   datastore_id = var.proxmox_iso_storage
   node_name    = var.proxmox_node
   url          = "https://factory.talos.dev/image/${local.talos_schematic_id}/${var.talos_version}/nocloud-amd64.raw.gz"
@@ -94,7 +99,7 @@ resource "proxmox_virtual_environment_vm" "control_plane" {
     interface    = "scsi0"
     size         = each.value.disk_gb
     file_format  = "raw"
-    import_from  = proxmox_virtual_environment_download_file.talos_nocloud.id
+    file_id      = proxmox_virtual_environment_download_file.talos_nocloud.id
   }
 
   network_device {
@@ -142,7 +147,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     interface    = "scsi0"
     size         = each.value.disk_gb
     file_format  = "raw"
-    import_from  = proxmox_virtual_environment_download_file.talos_nocloud.id
+    file_id      = proxmox_virtual_environment_download_file.talos_nocloud.id
   }
 
   network_device {

@@ -4,7 +4,7 @@ Le workflow réutilisable `.github/workflows/app-deploy.yml` de ce repo (`IAC-Ho
 
 1. Builder son image Docker.
 2. La pousser sur GHCR, taguée avec le SHA court du commit.
-3. Bumper automatiquement le tag d'image dans `kubernetes/apps/<app_name>/kustomization.yaml` de ce repo (commit + push sur `main`).
+3. Bumper automatiquement le tag d'image dans `kubernetes/apps/<app_name>/kustomization.yaml` de ce repo (commit + push sur `master`).
 4. Laisser ArgoCD détecter le changement et resynchroniser l'`Application` correspondante.
 
 ## Prérequis côté ce repo
@@ -29,7 +29,7 @@ on:
 
 jobs:
   deploy:
-    uses: gabriel25115CG/IAC-Homelab/.github/workflows/app-deploy.yml@main
+    uses: gabriel25115CG/IAC-Homelab/.github/workflows/app-deploy.yml@master
     with:
       app_name: portfolio
       image_name: ghcr.io/gabriel25115cg/portfolio
@@ -37,4 +37,4 @@ jobs:
       token: ${{ secrets.IAC_HOMELAB_TOKEN }}
 ```
 
-Le job `bump-manifest` du workflow réutilisable clone `IAC-Homelab`, exécute `kustomize edit set image` dans `kubernetes/apps/portfolio/`, puis commit et push sur `main`. ArgoCD (via l'`ApplicationSet` `apps`) détecte le changement au prochain cycle de sync et redéploie automatiquement la nouvelle image.
+Le job `bump-manifest` du workflow réutilisable clone `IAC-Homelab`, exécute `kustomize edit set image` dans `kubernetes/apps/portfolio/`, puis commit et push sur `master`. ArgoCD (via l'`ApplicationSet` `apps`) détecte le changement au prochain cycle de sync et redéploie automatiquement la nouvelle image.

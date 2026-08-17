@@ -8,7 +8,7 @@ Ordre global des étapes pour partir d'un homelab vide et arriver à un service 
 4. **Vérifier que la stack de base tourne** : ArgoCD doit afficher les `Application` `metallb`, `sealed-secrets`, `cert-manager`, `longhorn`, `traefik`, `demo-app` en `Synced`/`Healthy`. `https://demo.gabriel0day.cloud` doit répondre avec un certificat Let's Encrypt valide (basculer `letsencrypt-staging` → `letsencrypt-prod` une fois validé).
 5. **Déployer un vrai service (ex: portfolio)** :
    - Créer `kubernetes/apps/portfolio/` sur le modèle de `kubernetes/apps/demo-app/` (Deployment, Service, Ingress avec host `portfolio.gabriel0day.cloud` et annotation `cert-manager.io/cluster-issuer: letsencrypt-prod`).
-   - Commit + push sur `main` : l'`ApplicationSet` `apps` (voir `kubernetes/bootstrap/argocd/app-of-apps.yaml`) crée automatiquement l'`Application` ArgoCD correspondante.
+   - Commit + push sur `master` : l'`ApplicationSet` `apps` (voir `kubernetes/bootstrap/argocd/app-of-apps.yaml`) crée automatiquement l'`Application` ArgoCD correspondante.
    - Aucune étape DNS ou certificat manuelle : le wildcard DNS et le futur certificat wildcard couvrent tout `*.gabriel0day.cloud`.
 6. **Brancher la CI/CD applicative** : dans le repo externe du service (ex: `portfolio`), utiliser le workflow réutilisable `app-deploy.yml` pour automatiser build → push GHCR → bump du tag d'image → sync ArgoCD. Voir `docs/cicd.md`.
 

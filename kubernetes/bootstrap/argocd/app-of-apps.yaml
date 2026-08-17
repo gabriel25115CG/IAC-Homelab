@@ -9,7 +9,7 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/gabriel25115CG/IAC-Homelab.git
-        revision: main
+        revision: master
         directories:
           - path: kubernetes/apps/*
   template:
@@ -19,7 +19,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/gabriel25115CG/IAC-Homelab.git
-        targetRevision: main
+        targetRevision: master
         path: '{{.path.path}}'
       destination:
         server: https://kubernetes.default.svc
