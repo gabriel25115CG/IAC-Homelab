@@ -11,7 +11,7 @@ function App() {
     <main className="card">
       <div className="avatar" aria-hidden="true">GC</div>
       <h1>Gabriel Chalmet</h1>
-      <p className="subtitle">Ingénieur DevSecOps</p>
+      <p className="subtitle">Ingénieur DevSecOps · UTBM</p>
       <ul className="links">
         {links.map((link) => (
           <li key={link.href}>
