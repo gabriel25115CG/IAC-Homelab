@@ -5,6 +5,16 @@ Proxmox : provisioning, bootstrap, GitOps, HTTPS automatique, et un pipeline
 CI/CD permettant à un développeur d'ajouter une application sans aucune
 connaissance infra.
 
+> [!IMPORTANT]
+> Ceci est mon infrastructure personnelle réelle, publiée en libre accès
+> (licence MIT) pour que d'autres homelabbers puissent s'en servir de base.
+> C'est pensé pour être cloné et déployé chez toi, mais **pas branché tel
+> quel sur ton domaine/ta prod sans l'adapter** : change les valeurs dans les
+> `terraform.tfvars` (domaine, IPs, plages MetalLB, ressources VM), génère
+> tes propres secrets (token Cloudflare, etc.), et relis les manifests avant
+> d'appliquer. Aucune garantie n'est fournie (voir [LICENSE](LICENSE)) — c'est
+> mon setup perso, pas un produit maintenu.
+
 ## Architecture
 
 ```
@@ -112,3 +122,13 @@ automatiquement — aucune étape manuelle, aucune connaissance infra requise.
 - Talos applique par défaut l'admission `PodSecurity: baseline` sur tout
   namespace hors `kube-system` ; les composants qui en ont légitimement besoin
   (ex: Longhorn) sont explicitement passés en `privileged`.
+- Vulnérabilité trouvée ? Voir [SECURITY.md](SECURITY.md) (signalement privé,
+  pas d'issue publique).
+
+## Contributions
+
+Ce dépôt n'accepte pas de pull requests externes : c'est mon infrastructure
+personnelle, pas un projet communautaire maintenu. Sens-toi libre de le
+**forker** et de l'adapter chez toi (licence MIT), mais les PR/issues externes
+ne seront pas traitées ici (les interactions du dépôt sont restreintes aux
+collaborateurs).

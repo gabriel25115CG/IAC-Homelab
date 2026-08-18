@@ -5,7 +5,9 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: gabriel.chalmet@arrive.com
+    # Uniquement utilisée par Let's Encrypt pour les alertes d'expiration de
+    # certificat, jamais publiée. Remplace par ta propre adresse avant d'appliquer.
+    email: gabrielchalmet@proton.me
     privateKeySecretRef:
       name: letsencrypt-prod-account-key
     solvers:
