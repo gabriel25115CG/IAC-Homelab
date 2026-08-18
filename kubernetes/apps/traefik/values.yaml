@@ -10,9 +10,16 @@ ports:
       default: true
     exposedPort: 80
     # Sans ça, une URL tapée sans "https://" (très courant) renvoie un 404 au
-    # lieu de rediriger — c'est ce qui vient de se produire avec http://links...
-    redirectTo:
-      port: websecure
+    # lieu de rediriger. "redirectTo" (utilisé avant) n'existe pas dans le
+    # schéma du chart 41.2.0 ("additional properties 'redirectTo' not
+    # allowed") : ça bloquait le rendu Helm et donc TOUT sync ArgoCD depuis
+    # l'ajout de cette valeur. La bonne clé est http.redirections.entryPoint.
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
   websecure:
     port: 8443
     expose:
