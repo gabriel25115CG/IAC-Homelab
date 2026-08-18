@@ -71,6 +71,14 @@ prometheus-node-exporter:
       memory: 64Mi
 
 grafana:
+  # kustomize rend le chart via `helm template` (pas `helm install`), qui n'a
+  # pas accès au cluster pour vérifier si un secret existe déjà : la fonction
+  # randAlphaNum du chart génère donc un nouveau mot de passe aléatoire à
+  # CHAQUE sync. Un existingSecret fixe (scellé) évite ce problème.
+  admin:
+    existingSecret: grafana-admin-credentials
+    userKey: admin-user
+    passwordKey: admin-password
   # Le volume Longhorn est ReadWriteOnce : avec la stratégie par défaut
   # (RollingUpdate), l'ancien et le nouveau pod peuvent se retrouver
   # programmés sur des nœuds différents et se disputer le volume

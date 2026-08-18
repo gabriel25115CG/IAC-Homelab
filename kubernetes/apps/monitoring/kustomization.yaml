@@ -9,6 +9,7 @@ namespace: monitoring
 # node-exporter (hostNetwork/hostPID/hostPath).
 resources:
   - namespace.yaml
+  - grafana-admin-sealed-secret.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
