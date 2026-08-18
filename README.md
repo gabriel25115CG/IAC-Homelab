@@ -86,9 +86,14 @@ docs/
 
 ## Démarrer de zéro
 
-Voir [`docs/getting-started.md`](docs/getting-started.md) pour la séquence
-complète (Terraform Proxmox/Talos → bootstrap ArgoCD → premier service en
-HTTPS). En résumé :
+**[`docs/getting-started.md`](docs/getting-started.md) est un guide pas à
+pas complet** pour partir d'un Proxmox vierge et arriver à un premier service
+en HTTPS : prérequis (Proxmox, réseau, comptes Cloudflare), configuration des
+variables Terraform, provisioning en 3 passes, bootstrap ArgoCD, DNS
+wildcard, redirection des ports, et une section dépannage listant les vrais
+pièges rencontrés en le déployant (NTP bloqué, PodSecurity, PVC RWO, etc.).
+
+En résumé :
 
 1. `terraform/proxmox` puis `terraform/talos` provisionnent et bootstrappent
    le cluster (voir [`terraform/README.md`](terraform/README.md) pour l'ordre
