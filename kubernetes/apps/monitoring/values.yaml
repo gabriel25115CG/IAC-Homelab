@@ -88,9 +88,11 @@ grafana:
   resources:
     requests:
       cpu: 20m
-      memory: 64Mi
+      memory: 128Mi
     limits:
-      memory: 256Mi
+      # 256Mi causait des OOMKill réguliers (Grafana + ses sidecars de
+      # provisioning dashboards/datasources dépassent cette limite).
+      memory: 512Mi
   persistence:
     enabled: true
     storageClassName: longhorn
