@@ -422,6 +422,94 @@ h2 {
   line-height: 1.9;
 }
 
+/* ---------- architecture diagram ---------- */
+
+.architecture-wrap {
+  margin-top: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.architecture-diagram {
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  display: block;
+}
+
+.diagram-node {
+  fill: var(--bg-alt);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.diagram-node-sm {
+  fill: var(--bg);
+}
+
+.diagram-node-accent {
+  stroke: var(--accent);
+}
+
+.diagram-node-title {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.diagram-node-title-sm {
+  font-size: 13px;
+}
+
+.diagram-node-sub {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.diagram-cluster {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.diagram-cluster-title {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.diagram-edge {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.diagram-edge-accent {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.diagram-edge-dashed {
+  stroke-dasharray: 5 4;
+}
+
+.diagram-arrowhead {
+  fill: var(--text-muted);
+}
+
+.diagram-edge-label {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
 /* ---------- projects ---------- */
 
 .project-card {

@@ -1,6 +1,7 @@
 import './App.css'
 import Reveal from './components/Reveal'
 import Terminal from './components/Terminal'
+import ArchitectureDiagram from './components/ArchitectureDiagram'
 import { useTypewriter } from './hooks/useTypewriter'
 
 const ROLES = ['Ingénieur Cybersécurité', 'SOC & Threat Detection', 'Forensic & Incident Response', 'Sécurité réseau']
@@ -218,6 +219,9 @@ function App() {
               </a>
             </Reveal>
           ))}
+          <Reveal delay={220} className="architecture-wrap">
+            <ArchitectureDiagram />
+          </Reveal>
         </section>
 
         <Reveal as="section" id="contact" className="contact">
