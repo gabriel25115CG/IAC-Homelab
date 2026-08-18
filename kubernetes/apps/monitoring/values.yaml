@@ -71,6 +71,12 @@ prometheus-node-exporter:
       memory: 64Mi
 
 grafana:
+  # Le volume Longhorn est ReadWriteOnce : avec la stratégie par défaut
+  # (RollingUpdate), l'ancien et le nouveau pod peuvent se retrouver
+  # programmés sur des nœuds différents et se disputer le volume
+  # (Multi-Attach error), bloquant le rollout. Recreate évite ce cas.
+  strategy:
+    type: Recreate
   resources:
     requests:
       cpu: 20m
