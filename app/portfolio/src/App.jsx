@@ -40,7 +40,7 @@ const experiences = [
   {
     company: 'Arrive (Flowbird / EasyPark)',
     role: 'Apprenti Ingénieur Cybersécurité',
-    period: 'Septembre 2023 — Août 2026',
+    period: 'Septembre 2023 - Août 2026',
     highlights: [
       "Traitement et investigation d'alertes de sécurité (CTI, EDR, SIEM, DLP), gestion d'incidents et cellules de crise",
       "Mise en place d'une infrastructure de Threat Forensic pour des investigations post-incident en environnement contrôlé",
@@ -53,9 +53,9 @@ const experiences = [
   {
     company: 'Abéo',
     role: 'Apprenti Administrateur Réseau & Sécurité',
-    period: 'Septembre 2022 — Août 2023',
+    period: 'Septembre 2022 - Août 2023',
     highlights: [
-      "Mise en place d'un cluster de pare-feu Pfsense — cœur de réseau interconnectant les filiales via tunnels IPSec",
+      "Mise en place d'un cluster de pare-feu Pfsense (cœur de réseau interconnectant les filiales via tunnels IPSec)",
       'SIEM basé sur la stack ELK pour l\'archivage et la détection sur ~20 firewalls du groupe',
       'Support utilisateurs niveaux 1 & 2 (postes, réseaux, logiciels métier)',
     ],
@@ -115,7 +115,7 @@ function App() {
             <p className="lead">
               Diplômé de l'UTBM en Réseaux et Cybersécurité, j'opère au
               quotidien la détection et la réponse à incident (SOC, SIEM,
-              forensic) — et j'automatise la sécurité jusque dans mes
+              forensic), et j'automatise la sécurité jusque dans mes
               projets personnels.
             </p>
             <div className="cta">
@@ -140,7 +140,7 @@ function App() {
           </p>
           <p style={{ marginTop: 16 }}>
             En dehors de l'informatique, je suis passionné de musique et de
-            trail — deux activités qui reflètent mon goût pour la
+            trail, deux activités qui reflètent mon goût pour la
             créativité, le dépassement de soi et les nouveaux défis.
           </p>
         </Reveal>
@@ -237,7 +237,7 @@ function App() {
       </main>
 
       <footer>
-        <p>© {new Date().getFullYear()} Gabriel Chalmet — déployé via GitOps sur mon cluster Kubernetes.</p>
+        <p>© {new Date().getFullYear()} Gabriel Chalmet · déployé via GitOps sur mon cluster Kubernetes.</p>
       </footer>
     </>
   )

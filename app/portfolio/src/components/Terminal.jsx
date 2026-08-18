@@ -3,7 +3,7 @@ import { useReveal } from '../hooks/useReveal'
 
 const SCRIPT = [
   { type: 'cmd', text: 'whoami' },
-  { type: 'out', text: 'gabriel.chalmet — ingénieur cybersécurité' },
+  { type: 'out', text: 'gabriel.chalmet · ingénieur cybersécurité' },
   { type: 'cmd', text: 'trivy image ghcr.io/gabriel25115cg/portfolio' },
   { type: 'out', text: '0 critical, 0 high vulnerabilities found', ok: true },
   { type: 'cmd', text: 'kubectl get pods -n portfolio' },

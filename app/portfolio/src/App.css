@@ -454,6 +454,10 @@ h2 {
   stroke: var(--accent);
 }
 
+.diagram-node-hw {
+  stroke: var(--accent-2);
+}
+
 .diagram-node-title {
   fill: var(--text);
   font-family: var(--font-mono);
@@ -469,6 +473,20 @@ h2 {
   fill: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 11px;
+}
+
+.diagram-hardware {
+  fill: color-mix(in srgb, var(--accent-2) 5%, transparent);
+  stroke: var(--accent-2);
+  stroke-width: 1.5;
+}
+
+.diagram-hardware-title {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .diagram-cluster {
