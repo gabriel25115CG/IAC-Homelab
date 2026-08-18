@@ -9,4 +9,4 @@ resources:
 images:
 - name: ghcr.io/gabriel25115cg/portfolio
   newName: ghcr.io/gabriel25115cg/portfolio
-  newTag: a2319c6
+  newTag: d093c99
