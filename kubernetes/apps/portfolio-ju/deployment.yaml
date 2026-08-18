@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-ju
+  labels:
+    app: portfolio-ju
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-ju
+  template:
+    metadata:
+      labels:
+        app: portfolio-ju
+    spec:
+      containers:
+        - name: portfolio-ju
+          image: ghcr.io/gabriel25115cg/portfolio-ju:latest
+          ports:
+            - containerPort: 80
