@@ -3,6 +3,13 @@ kind: Kustomization
 
 namespace: monitoring
 
+# Le chart Helm kube-prometheus-stack ne template pas de Namespace lui-même
+# (contrairement au manifest brut de Longhorn) — on le déclare nous-mêmes ici
+# pour pouvoir y mettre le label PodSecurity "privileged" requis par
+# node-exporter (hostNetwork/hostPID/hostPath).
+resources:
+  - namespace.yaml
+
 helmCharts:
   - name: kube-prometheus-stack
     repo: https://prometheus-community.github.io/helm-charts

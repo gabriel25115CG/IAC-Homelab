@@ -30,3 +30,9 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          # Certains CRD volumineux (ex: kube-prometheus-stack) dépassent la
+          # limite de 256 Ko de l'annotation last-applied-configuration en
+          # apply classique — déjà rencontré avec le CRD ApplicationSet
+          # d'ArgoCD lui-même. Server-side apply évite la classe de problème
+          # pour toutes les apps, présentes et futures.
+          - ServerSideApply=true
