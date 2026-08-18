@@ -75,7 +75,7 @@ jobs:
           echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
           echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
